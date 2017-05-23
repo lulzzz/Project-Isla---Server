@@ -20,6 +20,7 @@ namespace Project_Isla___Server
         {
             static void Main(string[] args)
             {
+                Console.WriteLine("Starting server...");
                 Thread t = new Thread(() => Server.StartServer());
                 t.Start();
 
@@ -106,6 +107,8 @@ namespace Project_Isla___Server
                         //10 Connections in queue 
                         listener.Listen(10);
 
+                        Console.WriteLine("Waiting for a connection...");
+
                         //Begin to accept the connection
                         listener.BeginAccept(new AsyncCallback(AcceptCallback), listener);
 
@@ -142,6 +145,7 @@ namespace Project_Isla___Server
 
             public static void Stop(Socket listener)
             {
+                Console.WriteLine("Stopping server...");
                 //Check to see if the socket is connected
                 if (isConnected(listener))
                 {
@@ -158,6 +162,7 @@ namespace Project_Isla___Server
 
             public static void Stop()
             {
+                Console.WriteLine("Stopping server...");
                 //Set isRunning to false
                 isRunning = false;
 
@@ -191,7 +196,9 @@ namespace Project_Isla___Server
                 if (listener != null)
                 {
                     //End the accept
-                    Socket handler = listener.EndAccept(ar);
+                    Socket handler = listener.EndAccept(ar); //throws cannot access disposed object exception when server stops
+
+                    Console.WriteLine("Connection Established");
 
                     //Reset the accept event
                     acceptConnectionReset.Set();

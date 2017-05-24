@@ -124,14 +124,21 @@ namespace Project_Isla___Server
                     //Is there soemthing else running on port 50000?
                     Console.WriteLine(string.Format("Is something else running on port {0}?", port));
                     Console.WriteLine(string.Format("\n{0}", se.InnerException));
+
+                    //Set isRunning = false
+                    isRunning = false;
+
+                    //Start the disconnect
+                    listener.BeginDisconnect(false, new AsyncCallback(DisconnectCallback), listener);
+
+                    //Stop the server
+                    Stop(listener);
                 }
                 catch (Exception e)
                 {
                     //Misc exception
                     Console.WriteLine(e.InnerException);
-                }
-                finally
-                {
+
                     //Set isRunning = false
                     isRunning = false;
 
@@ -156,8 +163,10 @@ namespace Project_Isla___Server
                 //Set isRunning to false
                 isRunning = false;
 
-                //Close the listener
                 listener.Close();
+
+                //Allow the thread to continue and shutdown the server
+                acceptConnectionReset.Set();
             }
 
             public static void Stop()
@@ -166,8 +175,8 @@ namespace Project_Isla___Server
                 //Set isRunning to false
                 isRunning = false;
 
-                //Close the listener
-                listener.Close();
+                //Allow the thread to continue and shutdown the server
+                acceptConnectionReset.Set();
             }
 
             public static void Send(Socket handler, string message)
@@ -195,19 +204,27 @@ namespace Project_Isla___Server
 
                 if (listener != null)
                 {
-                    //End the accept
-                    Socket handler = listener.EndAccept(ar); //throws cannot access disposed object exception when server stops
+                    try
+                    {
+                        Socket handler = listener.EndAccept(ar);
+                        Console.WriteLine("Connection Established");
 
-                    Console.WriteLine("Connection Established");
+                        //Reset the accept event
+                        acceptConnectionReset.Set();
 
-                    //Reset the accept event
-                    acceptConnectionReset.Set();
+                        StateObject so = new StateObject();
+                        so.workSocket = handler;
 
-                    StateObject so = new StateObject();
-                    so.workSocket = handler;
+                        //Begin to receive data
+                        handler.BeginReceive(so.buffer, 0, BufferSize, 0, new AsyncCallback(readCallback), so);
+                    }
+                    catch (ObjectDisposedException ode)
+                    {
+                        Console.WriteLine("Cannot access disposed socket object");
+                        Console.WriteLine(ode.InnerException);
 
-                    //Begin to receive data
-                    handler.BeginReceive(so.buffer, 0, BufferSize, 0, new AsyncCallback(readCallback), so);
+
+                    }
                 }
             }
 

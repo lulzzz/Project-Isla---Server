@@ -39,7 +39,7 @@ namespace Project_Isla___Server
                             Server.Stop();
                             break;
                     }
-                    
+
                 }
 
             }
@@ -104,7 +104,7 @@ namespace Project_Isla___Server
                         //Reset the accept connection event, locking threads
 
                         acceptConnectionReset.Reset();
-                        //10 Connections in queue 
+                        //10 Connections in queue
                         listener.Listen(10);
 
                         Console.WriteLine("Waiting for a connection...");
@@ -112,7 +112,7 @@ namespace Project_Isla___Server
                         //Begin to accept the connection
                         listener.BeginAccept(new AsyncCallback(AcceptCallback), listener);
 
-                        //Wait for the conection to finish connecting
+                        //Wait for the connection to finish connecting
                         acceptConnectionReset.WaitOne();
                     }
 
@@ -121,7 +121,7 @@ namespace Project_Isla___Server
                 }
                 catch (SocketException se)
                 {
-                    //Is there soemthing else running on port 50000?
+                    //Is there something else running on port 50000?
                     Console.WriteLine(string.Format("Is something else running on port {0}?", port));
                     Console.WriteLine(string.Format("\n{0}", se.InnerException));
 
@@ -222,8 +222,6 @@ namespace Project_Isla___Server
                     {
                         Console.WriteLine("Cannot access disposed socket object");
                         Console.WriteLine(ode.InnerException);
-
-
                     }
                 }
             }

@@ -17,12 +17,12 @@ namespace Project_Isla___Server
         {
             Console.WriteLine("Starting server...");
 
-            Server server = new Server();
+            var server = new Server();
 
-            Thread t = new Thread(() => server.StartServer());
+            var t = new Thread(() => server.StartServer());
             t.Start();
 
-            string s = string.Empty;
+            var s = string.Empty;
 
             while (Server.isRunning)
             {
@@ -83,7 +83,7 @@ namespace Project_Isla___Server
         class StateObject
         {
             //Start object class
-            public Socket workSocket = null;
+            public Socket workSocket;
             public byte[] buffer = new byte[BufferSize];
             public StringBuilder sb = new StringBuilder();
         }
@@ -195,7 +195,7 @@ namespace Project_Isla___Server
 
         void Send(Socket handler, string message)
         {
-            StateObject so = new StateObject();
+            var so = new StateObject();
 
             //Create the message with beginning delim, message, and ending delim
             so.sb.Append(beginningDelim);
@@ -203,10 +203,10 @@ namespace Project_Isla___Server
             so.sb.Append(endingDelim);
 
             //Store the built message in a string
-            string send = so.sb.ToString();
+            var send = so.sb.ToString();
 
             //Convert string to byte array
-            byte[] byteData = Encoding.UTF8.GetBytes(send);
+            var byteData = Encoding.UTF8.GetBytes(send);
 
             //Begin to send the message
             handler.BeginSend(byteData, 0, byteData.Length, 0, new AsyncCallback(sendCallback), handler);
@@ -214,19 +214,19 @@ namespace Project_Isla___Server
 
         void AcceptCallback(IAsyncResult ar)
         {
-            Socket listener = (Socket)ar.AsyncState;
+            var listener = (Socket)ar.AsyncState;
 
             if (listener != null)
             {
                 try
                 {
-                    Socket handler = listener.EndAccept(ar);
+                    var handler = listener.EndAccept(ar);
                     Console.WriteLine("Connection Established");
 
                     //Reset the accept event
                     acceptConnectionReset.Set();
 
-                    StateObject so = new StateObject();
+                    var so = new StateObject();
                     so.workSocket = handler;
 
                     //Begin to receive data
@@ -242,8 +242,8 @@ namespace Project_Isla___Server
 
         void readCallback(IAsyncResult ar)
         {
-            StateObject so = (StateObject)ar.AsyncState;
-            Socket handler = so.workSocket;
+            var so = (StateObject)ar.AsyncState;
+            var handler = so.workSocket;
 
             //Check to see if the socket is connected or not
             if (!isConnected(handler))
@@ -253,7 +253,7 @@ namespace Project_Isla___Server
             }
 
             //Read the data
-            int read = handler.EndReceive(ar);
+            var read = handler.EndReceive(ar);
 
             if (read > 0)
             {
@@ -262,10 +262,10 @@ namespace Project_Isla___Server
 
                 if (so.sb.ToString().Contains(endingDelim)) //Check to see if the message contains the ending delim
                 {
-                    string send = string.Empty;
+                    var send = string.Empty;
 
                     //Get the message between the beginning delim and ending delim
-                    string message = between(so.sb.ToString());
+                    var message = between(so.sb.ToString());
 
                     switch (message)
                     {
@@ -281,7 +281,7 @@ namespace Project_Isla___Server
                     send = string.Format("{0}{1}{2}", beginningDelim, send, endingDelim);
 
                     //Convert send message to bytes
-                    byte[] bytesToSend = Encoding.UTF8.GetBytes(send);
+                    var bytesToSend = Encoding.UTF8.GetBytes(send);
 
                     //Echo data back to client
                     handler.BeginSend(bytesToSend, 0, bytesToSend.Length, SocketFlags.None, new AsyncCallback(sendCallback), so);
@@ -301,13 +301,13 @@ namespace Project_Isla___Server
         void sendCallback(IAsyncResult ar)
         {
             //End the send message task
-            StateObject so = (StateObject)ar.AsyncState;
-            Socket handler = so.workSocket;
+            var so = (StateObject)ar.AsyncState;
+            var handler = so.workSocket;
 
             handler.EndSend(ar);
 
             //Create object to begin to receive more data
-            StateObject newSo = new StateObject();
+            var newSo = new StateObject();
             newSo.workSocket = handler;
 
             //Begin to receive data
@@ -317,7 +317,7 @@ namespace Project_Isla___Server
         void DisconnectCallback(IAsyncResult ar)
         {
             //Disconnect
-            Socket so = (Socket)ar.AsyncState;
+            var so = (Socket)ar.AsyncState;
             so.EndDisconnect(ar);
 
             disconnectResetEvent.Set();

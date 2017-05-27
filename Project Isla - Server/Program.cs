@@ -181,7 +181,6 @@ namespace Project_Isla___Server
             listener.Close();
 
             //Allow the thread to continue and shutdown the server
-            disconnectResetEvent.Set();
             acceptConnectionReset.Set();
         }
 
@@ -320,6 +319,8 @@ namespace Project_Isla___Server
             //Disconnect
             Socket so = (Socket)ar.AsyncState;
             so.EndDisconnect(ar);
+
+            disconnectResetEvent.Set();
         }
     }
 }

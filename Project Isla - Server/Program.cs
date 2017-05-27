@@ -97,7 +97,7 @@ namespace Project_Isla___Server
         string between(string message)
         {
             //Extract the message between the start and end delimiters
-            return Regex.Match(message, @"^<!--STARTMESSAGE-->(.*?)<!--ENDMESSAGE-->$").Groups[1].Value;
+            return Regex.Match(message, string.Format("{0}(.*?){1}",beginningDelim,endingDelim)).Groups[1].Value;
         }
 
         public void StartServer()

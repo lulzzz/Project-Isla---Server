@@ -8,9 +8,10 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Project_Isla___Server</RootNamespace>
     <AssemblyName>Project Isla - Server</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -33,10 +34,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BouncyCastle.Crypto">
-      <HintPath>..\..\..\..\Documents\C#\APIs\BouncyCastle\BouncyCastle.Crypto.dll</HintPath>
+      <HintPath>..\..\..\..\Desktop\C#\APIs\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="PI API">
+      <HintPath>..\..\PI API\PI API\bin\Debug\PI API.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />

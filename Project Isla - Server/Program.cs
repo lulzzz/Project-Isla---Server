@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using PIAPI;
 
 namespace Project_Isla___Server
 {
@@ -62,9 +63,7 @@ namespace Project_Isla___Server
         private static ManualResetEvent acceptConnectionReset = new ManualResetEvent(false);
         private static ManualResetEvent disconnectResetEvent = new ManualResetEvent(false);
 
-        //Start and end of message delimiters
-        public const string beginningDelim = "<!--STARTMESSAGE-->";
-        public const string endingDelim = "<!--ENDMESSAGE-->";
+        
 
         public Server()
         {
@@ -86,18 +85,6 @@ namespace Project_Isla___Server
             public Socket workSocket;
             public byte[] buffer = new byte[BufferSize];
             public StringBuilder sb = new StringBuilder();
-        }
-
-        bool isConnected(Socket s)
-        {
-            //Code for polling the socket to see if we are connected or not
-            return !((s.Poll(1000, SelectMode.SelectRead) && (s.Available == 0)) || !s.Connected);
-        }
-
-        string between(string message)
-        {
-            //Extract the message between the start and end delimiters
-            return Regex.Match(message, string.Format("{0}(.*?){1}",beginningDelim,endingDelim)).Groups[1].Value;
         }
 
         public void StartServer()
@@ -160,7 +147,7 @@ namespace Project_Isla___Server
         void Stop(Socket listener)
         {
             //Check to see if the socket is connected
-            if (isConnected(listener))
+            if (Networking.isConnected(listener))
             {
                 try
                 {
@@ -198,9 +185,9 @@ namespace Project_Isla___Server
             var so = new StateObject();
 
             //Create the message with beginning delim, message, and ending delim
-            so.sb.Append(beginningDelim);
+            so.sb.Append(PIAPI.String.BeginningDelimiter);
             so.sb.Append(message);
-            so.sb.Append(endingDelim);
+            so.sb.Append(PIAPI.String.EndingDelimiter);
 
             //Store the built message in a string
             var send = so.sb.ToString();
@@ -246,7 +233,7 @@ namespace Project_Isla___Server
             var handler = so.workSocket;
 
             //Check to see if the socket is connected or not
-            if (!isConnected(handler))
+            if (!Networking.isConnected(handler))
             {
                 handler.Close();
                 return;
@@ -260,12 +247,12 @@ namespace Project_Isla___Server
                 //Store received data
                 so.sb.Append(Encoding.UTF8.GetString(so.buffer, 0, read));
 
-                if (so.sb.ToString().Contains(endingDelim)) //Check to see if the message contains the ending delim
+                if (so.sb.ToString().Contains(PIAPI.String.EndingDelimiter)) //Check to see if the message contains the ending delim
                 {
                     var send = string.Empty;
 
                     //Get the message between the beginning delim and ending delim
-                    var message = between(so.sb.ToString());
+                    var message = PIAPI.String.Between(so.sb.ToString());
 
                     switch (message)
                     {
@@ -278,7 +265,7 @@ namespace Project_Isla___Server
                     }
 
                     //Create appropriate response message
-                    send = string.Format("{0}{1}{2}", beginningDelim, send, endingDelim);
+                    send = string.Format("{0}{1}{2}", PIAPI.String.BeginningDelimiter, send, PIAPI.String.EndingDelimiter);
 
                     //Convert send message to bytes
                     var bytesToSend = Encoding.UTF8.GetBytes(send);

@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using PIAPI;
 
 namespace Project_Isla___Server
@@ -45,25 +41,59 @@ namespace Project_Isla___Server
     class Server
     {
         private static Socket listener;
-        public static Socket Listener { get => listener; set => listener = value; }
+        public static Socket Listener
+        {
+            get => listener;
+            set
+            {
+                if (listener == value)
+                    return;
+                listener = value;
+            }
+        }
 
         //The server is running
         private static bool isrunning;
-        public static bool isRunning { get => isrunning; set => isrunning = value; }
+        public static bool isRunning
+        {
+            get => isrunning;
+            set
+            {
+                if (isrunning == value)
+                    return;
+                isrunning = value;
+            }
+        }
 
         //Size of data buffer
         private static int bufferSize;
-        public static int BufferSize { get => bufferSize; set => bufferSize = value; }
+        public static int BufferSize
+        {
+            get => bufferSize;
+            set
+            {
+                if (bufferSize == value)
+                    return;
+                bufferSize = value;
+            }
+        }
 
         //Run server on port 50000
         private static int port;
-        public static int Port { get => port; set => port = value; }
+        public static int Port
+        {
+            get => port;
+            set
+            {
+                if (port == value)
+                    return;
+                port = value;
+            }
+        }
 
         //Reset event for accept callback
         private static ManualResetEvent acceptConnectionReset = new ManualResetEvent(false);
         private static ManualResetEvent disconnectResetEvent = new ManualResetEvent(false);
-
-        
 
         public Server()
         {

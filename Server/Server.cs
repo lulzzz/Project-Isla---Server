@@ -1,44 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using PIAPI;
 
 namespace Project_Isla___Server
 {
-
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Starting server...");
-
-            var server = new Server();
-
-            var t = new Thread(() => server.StartServer());
-            t.Start();
-
-            var s = string.Empty;
-
-            while (Server.isRunning)
-            {
-                //Commands go here
-                s = Console.ReadLine();
-
-                switch (s)
-                {
-                    case "stop":
-                        server.Stop();
-                        break;
-                }
-
-            }
-
-        }
-    }
-
-    class Server
+    public class Server
     {
         private static Socket listener;
         public static Socket Listener
@@ -214,7 +186,7 @@ namespace Project_Isla___Server
         {
             var so = new StateObject();
 
-            //Create the message with beginning delim, message, and ending delim
+            //Create the message with beginning delimiter, message, and ending delimiter
             so.sb.Append(PIAPI.String.BeginningDelimiter);
             so.sb.Append(message);
             so.sb.Append(PIAPI.String.EndingDelimiter);
@@ -277,11 +249,11 @@ namespace Project_Isla___Server
                 //Store received data
                 so.sb.Append(Encoding.UTF8.GetString(so.buffer, 0, read));
 
-                if (so.sb.ToString().Contains(PIAPI.String.EndingDelimiter)) //Check to see if the message contains the ending delim
+                if (so.sb.ToString().Contains(PIAPI.String.EndingDelimiter)) //Check to see if the message contains the ending delimiter
                 {
                     var send = string.Empty;
 
-                    //Get the message between the beginning delim and ending delim
+                    //Get the message between the beginning delimiter and ending delimiter
                     var message = PIAPI.String.Between(so.sb.ToString());
 
                     switch (message)
@@ -341,4 +313,3 @@ namespace Project_Isla___Server
         }
     }
 }
-

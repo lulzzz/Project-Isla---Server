@@ -7,6 +7,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using PIAPI;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
+using System.Security.Authentication;
 
 namespace Project_Isla___Server
 {
@@ -144,6 +147,59 @@ namespace Project_Isla___Server
 
             //Stop the server when the while loop breaks
             Stop(listener);
+        }
+
+        bool ValidateCertificate(object sender, X509Certificate cert, X509Chain chain, SslPolicyErrors sslErrors)
+        {
+            if (sslErrors == SslPolicyErrors.None)
+                return true;
+
+            Console.WriteLine("Certificate error: {0}", sslErrors);
+
+            return false;
+        }
+
+        void EstablishSSLConnection(Socket socket)
+        {
+            SslStream sslStream = new SslStream(new NetworkStream(socket), false, ValidateCertificate, null);
+
+            X509Certificate certificate = new X509Certificate();
+
+            //Create code to change sslprotocols based on client needs
+            try
+            {
+                sslStream.BeginAuthenticateAsServer(certificate, true, SslProtocols.Tls12, true, new AsyncCallback(AuthenticationCallback), sslStream);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.InnerException);
+            }
+        }
+
+        void AuthenticationCallback(IAsyncResult ar)
+        {
+            SslStream stream = (SslStream)ar.AsyncState;
+            stream.EndAuthenticateAsServer(ar);
+        }
+
+        void SSLRead(SslStream sslStream)
+        {
+            
+        }
+
+        void SSLReadCallback()
+        {
+
+        }
+
+        void SSLWrite()
+        {
+
+        }
+
+        void SSLWriteCallback()
+        {
+
         }
 
         void Stop(Socket listener)
